@@ -12,6 +12,22 @@
 <body>
 
 
+  <form id="search-form">
+    <input class="search-input" type="text" name="query" id="searchInput" placeholder="Search images..." />
+    <button type="submit">Search</button>
+  </form>
+
+
+  <div id="image-gallery" class="gallery"></div>
+  <p id="spinner" class="loader spinner is-hidden">
+    Loading images, please wait...
+  </p>
+  <button id="load-more" type="button" class="btn btn-primary button is-hidden" data-action="load-more">
+    Load more
+  </button>
+
+  <!-- <script src="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/js/iziToast.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
   <script type="module" src="./main.js"></script>
 </body>
 
