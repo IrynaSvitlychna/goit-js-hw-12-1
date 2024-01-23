@@ -38,7 +38,7 @@ searchForm.addEventListener("submit", async (event) => {
   try {
     toggleSpinner(true);
     const data = await fetchImages();
-    displayImages(data.hits);
+    displayImages(data);
   } catch (error) {
     showError();
   } finally {
@@ -50,7 +50,7 @@ loadMoreButton.addEventListener("click", async () => {
   currentPage += 1;
   await fetchAndDisplayImages();
 
-  if (isLastPage = true) {
+  if (isLastPage) {
     loadMoreButton.classList.add('is-hidden');
     theEnd();
   } 
@@ -79,15 +79,17 @@ async function fetchAndDisplayImages() {
   }
 }
 
-function displayImages(images) {
+function displayImages(data) {
+  const images = data.hits;
+
   if (images.length === 0) {
     showError();
     return;
   }
 
-    isLastPage = (images.length < pageSize);
-    loadMoreButton.classList.remove("is-hidden");
-    toggleSpinner(false);
+  isLastPage = (data.totalHits <= currentPage * pageSize);
+  loadMoreButton.classList.remove("is-hidden");
+  toggleSpinner(false);
 
   const imageElements = images.map(createImageElement);
   imageGallery.innerHTML = "";
@@ -97,13 +99,13 @@ function displayImages(images) {
 }
 
 function appendImages(images) {
-    if (images.length === 0) {
-        isLastPage = true;
-        loadMoreButton.classList.add("is-hidden");
-        toggleSpinner(false);
-        theEnd();
-        return;
-    }
+  if (images.length === 0) {
+    isLastPage = true;
+    loadMoreButton.classList.add("is-hidden");
+    toggleSpinner(false);
+    theEnd();
+    return;
+  }
 
   const imageElements = images.map(createImageElement);
   imageGallery.append(...imageElements);
@@ -112,11 +114,11 @@ function appendImages(images) {
 
 function createImageElement(image) {
   const link = document.createElement("a");
-  link.href = image.largeImageURL;
+  link.href = image.webformatURL;
   link.setAttribute("data-lightbox", "image-gallery");
   link.innerHTML = `
     <div class="gallery-item">
-      <img src="${image.largeImageURL}" alt="${image.tags}">
+      <img src="${image.webformatURL}" alt="${image.tags}">
       <div class="image-info">
         <div class="img-info-item">
           <p>Likes:</p>
@@ -151,8 +153,7 @@ function initializeLightbox() {
 function theEnd() {
   iziToast.info({
     title: "Info",
-    message:
-      "There are no more images for your request.",
+    message: "There are no more images for your request.",
   });
 }
 
@@ -164,7 +165,11 @@ function showError() {
   imageGallery.innerHTML = "";
   iziToast.error({
     title: "Error",
-    message:
-      "Sorry, there are no images matching your search query. Please try again!",
+    message: "Sorry, there are no images matching your search query. Please try again!",
   });
 }
+
+
+
+
+
